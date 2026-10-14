@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GCP + Kubernetes Learning Slides</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #111938;
+        --text: #e9eeff;
+        --muted: #b5c0e6;
+        --accent: #5fa8ff;
+        --accent-2: #89f7d3;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+        background: radial-gradient(circle at 10% 10%, #1a2452, var(--bg) 48%),
+          radial-gradient(circle at 90% 90%, #173a46, var(--bg) 42%);
+        color: var(--text);
+      }
+
+      .deck {
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 1.5rem;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .title {
+        margin: 0;
+        font-size: clamp(1.1rem, 2.8vw, 1.6rem);
+      }
+
+      .counter {
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .viewport {
+        position: relative;
+        min-height: 76vh;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 20px;
+        background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.01));
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+        overflow: hidden;
+      }
+
+      .slide {
+        display: none;
+        padding: clamp(1rem, 2.8vw, 2rem);
+        height: 100%;
+      }
+
+      .slide.active {
+        display: block;
+      }
+
+      h2 {
+        margin-top: 0;
+        font-size: clamp(1.25rem, 3.8vw, 2rem);
+      }
+
+      .subtitle {
+        color: var(--muted);
+        margin-top: -0.3rem;
+      }
+
+      .card-grid {
+        display: grid;
+        gap: 0.9rem;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      }
+
+      .card {
+        background: rgba(15, 28, 65, 0.6);
+        border: 1px solid rgba(137, 247, 211, 0.2);
+        border-radius: 14px;
+        padding: 0.85rem;
+      }
+
+      .diagram {
+        margin-top: 1rem;
+        display: grid;
+        gap: 0.35rem;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: clamp(0.8rem, 1.9vw, 1rem);
+      }
+
+      .diagram .box {
+        border-radius: 12px;
+        border: 1px dashed rgba(255, 255, 255, 0.35);
+        padding: 0.55rem;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .fun {
+        color: #ffd86f;
+        font-weight: 700;
+      }
+
+      ul {
+        line-height: 1.55;
+      }
+
+      .controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 1rem;
+      }
+
+      button {
+        appearance: none;
+        border: 0;
+        border-radius: 999px;
+        padding: 0.6rem 1rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .nav {
+        background: var(--accent);
+        color: #041123;
+      }
+
+      .hint {
+        color: var(--muted);
+        text-align: center;
+        margin: 0.2rem 0 0;
+        font-size: 0.92rem;
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        background: rgba(137, 247, 211, 0.2);
+        border: 1px solid rgba(137, 247, 211, 0.5);
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="deck">
+      <header class="topbar">
+        <h1 class="title">☁️ GCP + Kubernetes Crash Course (With Memes in Spirit)</h1>
+        <span id="counter" class="counter">1 / 5</span>
+      </header>
+
+      <section class="viewport" aria-live="polite">
+        <article class="slide active">
+          <h2>Welcome, Cloud Explorers 🚀</h2>
+          <p class="subtitle">Goal: Understand and memorize GCP + Kubernetes hierarchy without boring slides.</p>
+          <div class="card-grid">
+            <div class="card">
+              <strong>What you'll learn</strong>
+              <ul>
+                <li>Google Cloud hierarchy</li>
+                <li>GKE + K8s building blocks</li>
+                <li>What / Why / How of Kubernetes</li>
+              </ul>
+            </div>
+            <div class="card">
+              <strong>How to navigate</strong>
+              <ul>
+                <li>Use <span class="pill">←</span> and <span class="pill">→</span> keyboard</li>
+                <li>Or click Prev / Next buttons</li>
+                <li>Memorize with funny analogies</li>
+              </ul>
+            </div>
+          </div>
+          <p class="fun">Mnemonic: “Cloud is a city, Kubernetes is city management.”</p>
+        </article>
+
+        <article class="slide">
+          <h2>Google Cloud Hierarchy 🏢</h2>
+          <p class="subtitle">Think of it as a corporate org chart, but with more YAML.</p>
+          <div class="diagram">
+            <div class="box">🏛️ Organization (Top company account)</div>
+            <div class="box">↳ 📁 Folder (Department: Eng, Finance, etc.)</div>
+            <div class="box">↳ ↳ 📦 Project (Where billing + APIs + resources live)</div>
+            <div class="box">↳ ↳ ↳ 🌍 Region (Geographic area, e.g., us-central1)</div>
+            <div class="box">↳ ↳ ↳ 📍 Zone (Specific data center slice, e.g., us-central1-a)</div>
+          </div>
+          <ul>
+            <li><strong>Organization</strong>: the boss-level umbrella account.</li>
+            <li><strong>Folder</strong>: optional grouping for teams and policies.</li>
+            <li><strong>Project</strong>: the real working unit for permissions, billing, and services.</li>
+            <li><strong>Region/Zone</strong>: where your workloads physically run.</li>
+          </ul>
+          <p class="fun">Funny take: Project is your apartment, Region is your city, Zone is your apartment wing.</p>
+        </article>
+
+        <article class="slide">
+          <h2>GKE & Kubernetes Hierarchy 🧱</h2>
+          <p class="subtitle">From cluster to pod: container world in nesting dolls style.</p>
+          <div class="diagram">
+            <div class="box">🎛️ GKE Cluster (Managed by Google)</div>
+            <div class="box">↳ 🖥️ Node Pool (Group of worker VMs)</div>
+            <div class="box">↳ ↳ 🖥️ Node (One worker machine)</div>
+            <div class="box">↳ ↳ ↳ 📚 Namespace (Logical room per team/app)</div>
+            <div class="box">↳ ↳ ↳ ↳ 🚀 Pod (Smallest deployable unit, 1+ containers)</div>
+          </div>
+          <ul>
+            <li><strong>Cluster</strong>: your whole Kubernetes playground.</li>
+            <li><strong>Namespace</strong>: keeps apps from stepping on each other.</li>
+            <li><strong>Pod</strong>: tiny house where container(s) live.</li>
+          </ul>
+          <p class="fun">Funny take: Pods are lunch boxes; cluster is the school cafeteria.</p>
+        </article>
+
+        <article class="slide">
+          <h2>What is Kubernetes? ❓</h2>
+          <p class="subtitle">A control system that automates container deployment and operations.</p>
+          <div class="card-grid">
+            <div class="card">
+              <strong>What</strong>
+              <p>Kubernetes (K8s) is an orchestration platform for containers.</p>
+            </div>
+            <div class="card">
+              <strong>Why</strong>
+              <p>Handles scaling, self-healing, rolling updates, and service discovery.</p>
+            </div>
+            <div class="card">
+              <strong>How</strong>
+              <p>You declare desired state in YAML, K8s continuously enforces it.</p>
+            </div>
+          </div>
+          <p class="fun">K8s is like a very strict but helpful hostel warden for containers.</p>
+        </article>
+
+        <article class="slide">
+          <h2>How to Use K8s in Real Life 🛠️</h2>
+          <p class="subtitle">Simple workflow students can remember and practice.</p>
+          <ol>
+            <li>Containerize app with Docker.</li>
+            <li>Create Deployment + Service YAML.</li>
+            <li>Apply manifests: <code>kubectl apply -f ...</code></li>
+            <li>Check Pods/Services: <code>kubectl get pods,svc -n &lt;namespace&gt;</code></li>
+            <li>Scale and update with Deployment changes.</li>
+          </ol>
+          <div class="card">
+            <strong>Memory trick:</strong>
+            <p><span class="pill">Build</span> → <span class="pill">Declare</span> → <span class="pill">Apply</span> → <span class="pill">Observe</span> → <span class="pill">Scale</span></p>
+          </div>
+          <p class="fun">Congrats! You can now explain cloud hierarchy without frightening your classmates. 🎉</p>
+        </article>
+      </section>
+
+      <div class="controls">
+        <button id="prevBtn" class="nav" type="button" aria-label="Previous slide">← Prev</button>
+        <button id="nextBtn" class="nav" type="button" aria-label="Next slide">Next →</button>
+      </div>
+      <p class="hint">Tip: keyboard arrows also work like a presentation.</p>
+    </main>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const counter = document.getElementById('counter');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      let current = 0;
+
+      function renderSlide(index) {
+        current = (index + slides.length) % slides.length;
+        slides.forEach((slide, i) => slide.classList.toggle('active', i === current));
+        counter.textContent = `${current + 1} / ${slides.length}`;
+      }
+
+      prevBtn.addEventListener('click', () => renderSlide(current - 1));
+      nextBtn.addEventListener('click', () => renderSlide(current + 1));
+
+      window.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowLeft') {
+          renderSlide(current - 1);
+        }
+        if (event.key === 'ArrowRight') {
+          renderSlide(current + 1);
+        }
+      });
+    </script>
+  </body>
+</html>
